@@ -101,3 +101,9 @@ deploy:
   type: 'git'
   repository: https://github.com/shuoGG1239/shuoGG1239.github.io.git
   branch: master
+
+excerpt:
+  depth: 2
+  excerpt_excludes: [img,figure,h1,h2,h3,h4,h5]
+  more_excludes: []
+  hideWholePostExcerpts: true
