@@ -107,3 +107,8 @@ excerpt:
   excerpt_excludes: [img,figure,h1,h2,h3,h4,h5]
   more_excludes: []
   hideWholePostExcerpts: true
+
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml
