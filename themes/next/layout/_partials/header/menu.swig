@@ -30,5 +30,13 @@
       </li>
     {%- endif %}
   </ul>
+  <hr>
+  <ul class="menu">
+  	<div class="category-all-page">
+  		<div class="category-all">
+  		  {{ list_categories({depth: 1}) }}
+  		</div>
+  	</div>
+  </ul>
 {%- endif %}
 </nav>

@@ -43,13 +43,6 @@
           <span>0%</span>
         </div>
       {%- endif %}
-
-    </div>
-
-    <div class="category-all-page">
-      <div class="category-all">
-        {{ list_categories({depth: 1}) }}
-      </div>
     </div>
   </aside>
   <div id="sidebar-dimmer"></div>
