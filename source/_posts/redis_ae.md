@@ -1,6 +1,8 @@
 ---
 title: Redis源码阅读-事件模型ae
 date: 2020/05/05
+categories: 
+- 后端
 ---
 #### 源码文件
 * src/ae.c

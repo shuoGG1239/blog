@@ -1,6 +1,8 @@
 ---
 title: axios的ES module (esm)
 date: 2020/06/05
+categories: 
+- 前端
 ---
 ##### 背景
 * 刚好遇到某个场景需要用到`es module`, axios用习惯了, 不过axios官方没有esm版本 [https://github.com/axios/axios/issues/1879](https://github.com/axios/axios/issues/1879)

@@ -1,6 +1,8 @@
 ---
 title: markdown锚点跳转的坑
 date: 2019/11/13
+categories: 
+- 工具
 ---
 #### 背景
 * 写markdown有这样的需求: 点击某个词跳转到markdown文章的某个位置(某个锚点), 但是写完发现有些点了跳不过去

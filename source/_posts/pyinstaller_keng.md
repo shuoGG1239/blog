@@ -1,6 +1,10 @@
 ---
 title: 总结Pyinstaller的坑及终极解决方法
 date: 2018/07/06
+categories: 
+- PC端
+tags:
+- python
 ---
 #### 一. 首先要有个稳定环境
 * 下面是博主经测试的觉得坑比较少的环境搭配

@@ -1,6 +1,10 @@
 ---
 title: golang/net包与epoll
 date: 2020/06/07
+categories: 
+- 后端
+tags:
+- go
 ---
 #### net包与epoll
 * linux下go的网络包底层如tcp也是采用epoll来实现, 你可以从`Accept`方法一路追下去, 追到尽头你会看到`internal/poll/fd_poll_runtime.go`里面这些在runtime实现的方法:

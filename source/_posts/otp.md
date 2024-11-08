@@ -1,6 +1,8 @@
 ---
 title: 简述OTP动态口令及其实现
 date: 2020/06/06
+categories: 
+- 后端
 ---
 #### 背景
 * 最近用到了OTP, 遂mark一下

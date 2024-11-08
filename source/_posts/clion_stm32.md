@@ -1,6 +1,8 @@
 ---
 title: Jetbrains Clion官方支持了Stm32的项目搭建, 说下感想
 date: 2020/05/05
+categories: 
+- 工具
 ---
 #### 背景
 * 得知Clion 2019.1之后的版本官方直接支持Stm32项目的创建, 遂怀揣激动之心准备一试...
