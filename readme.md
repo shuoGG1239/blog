@@ -5,6 +5,9 @@
 * hexo deploy   // 推到github
 
 
+#### seo
+* search.google.com
+
 #### Icarus
 * 修改_config.icarus.yml
 * [Icarus内容宽度](https://carol-yang09.github.io/2020/11/22/hexo-icarus-themes-content-width/)
