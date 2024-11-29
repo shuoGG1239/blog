@@ -13,6 +13,8 @@ tags:
 #### 源码信息
 * 源码版本: v2.8.1
 * 源码仓库: [https://github.com/alibaba/MongoShake](https://github.com/alibaba/MongoShake)
+* 架构 [mongoshake-arch](https://github.com/alibaba/MongoShake/blob/develop/resources/dataflow.png)
+
 
 #### 一. 进程入口:main
 * `func main`为进程的入口, 核心源码如下: (为了只关注核心逻辑, 无关紧要的代码片段会用`// ... + 注释`代替)

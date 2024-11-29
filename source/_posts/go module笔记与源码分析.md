@@ -14,17 +14,17 @@ tags:
 #### go mod源码位置
 * 仓库位置: [https://github.com/golang/go/tree/go1.16.6/src/cmd/go/internal/modcmd](https://github.com/golang/go/tree/go1.16.6/src/cmd/go/internal/modcmd)
 * 相对位置:
-    * "cmd/go/internal/modcmd"
-    * "cmd/go/internal/modfetch"
-    * "cmd/go/internal/modget"
-    * "cmd/go/internal/modload"
+    * `cmd/go/internal/modcmd`
+    * `cmd/go/internal/modfetch`
+    * `cmd/go/internal/modget`
+    * `cmd/go/internal/modload`
 
 
 #### 关于版本选择
 * 同一个大版本取最大版本号
     + main依赖了(A1.1.0, B1.2.0), B1.2.0依赖了(A1.0.0), 则最终构建阶段大家都用A1.1.0编译
 * 版本从信息从`/@v/list`获取, 如果为空则取走`@latest`获取最新版本号, 在拿最新版本号取拉包
-* [版本规则](https://golang.google.cn/doc/modules/version-numbers)
+* [官方版本规则](https://golang.google.cn/doc/modules/version-numbers)
 
 * 核心逻辑
 ```go
@@ -61,12 +61,6 @@ func useSumDB(mod module.Version) bool {
 // cmd/go/internal/cfg/cfg.go
 GONOSUMDB  = envOr("GONOSUMDB", GOPRIVATE)
 ```
-
-#### commit version
-* go get github.com/pingcap/parser@659821e
-* go get github.com/pingcap/parser@latest
-* go get github.com/pingcap/parser@feature-lstest
-
 
 #### @latest
 * v0.0.5 > v0.0.5-alpha > v0.0.4
@@ -121,3 +115,10 @@ func Compare(v, w string) int {
 * https://sum.golang.org/lookup/golang.org/x/sync@v0.0.0-20181221193216-37e7f081c4d4
 * checksum源码: go/src搜索 checkModSum(mod, hash)
 * checksumDB源码: go/src搜索 checkSumDB(mod, h)
+
+
+#### commit version
+* go get github.com/pingcap/parser@659821e
+* go get github.com/pingcap/parser@latest
+* go get github.com/pingcap/parser@feature-lstest
+
