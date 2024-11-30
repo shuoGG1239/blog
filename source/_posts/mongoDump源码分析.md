@@ -9,7 +9,7 @@ tags:
 ---
 
 #### 简介
-* 因为工作需要魔改该模块, 所以详细看了源码, 这里顺便做下笔记
+* 最近用到了该模块, 期间看了源码, 这里顺便做下笔记
 * 本文前几小节讲MongoDump的运转流程, 后几小节讲代码方面的技术细节
 * 源码版本: 100.6.1
 * 源码仓库: [https://github.com/mongodb/mongo-tools/blob/100.6.1/mongodump](https://github.com/mongodb/mongo-tools/blob/100.6.1/mongodump)

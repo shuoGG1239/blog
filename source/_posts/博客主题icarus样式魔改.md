@@ -8,11 +8,12 @@ tags:
 ---
 
 #### 简介
-* 博客主题由next换成icarus, 官方默认样式不大满意, 我做了些调整, 这里记下调整过程
+* 这几天把博客主题从next换成了icarus, 官方默认样式不大满意, 我做了些调整, 这里记下调整过程
 
 
 #### 预览(前者官方, 后者魔改)
-* xxx
+![easyscreenshot20241128211047.jpg](https://s2.loli.net/2024/11/28/hYTn9s7V1vFQP6G.jpg)
+![easyscreenshot20241128211128.jpg](https://s2.loli.net/2024/11/28/GOtbCjoenPgylE6.jpg)
 
 
 #### 小组件调整
@@ -120,7 +121,7 @@ function getColumnSizeClass(columnCount) {
 
 #### 侧边栏的profile
 * 由于侧边栏被我调窄了, 头像显得太大, 所以这里调下`layout/widget/profile.jsx`的`figure`, 将`128x128`替换为`64x64`
-```
+```html
     <div>
         <figure class="image is-64x64 mx-auto mb-2">
             <img class={'avatar' + (avatarRounded ? ' is-rounded' : '')} src={avatar} alt={author} />
