@@ -379,7 +379,7 @@ plugins:
     katex: false
     # Enable the MathJax math typesetting support
     # https://www.mathjax.org/
-    mathjax: false
+    mathjax: true
     # Enable the Outdated Browser plugin
     # http://outdatedbrowser.com/
     outdated_browser: false
@@ -403,8 +403,8 @@ plugins:
 # https://ppoffice.github.io/hexo-theme-icarus/Configuration/Theme/speed-up-your-site-with-custom-cdn/
 providers:
     # Name or URL template of the JavaScript and/or stylesheet CDN provider
-    cdn: jsdelivr
+    cdn: cdnjs
     # Name or URL template of the webfont CDN provider
-    fontcdn: google
+    fontcdn: ustc
     # Name or URL of the fontawesome icon font CDN provider
     iconcdn: fontawesome
