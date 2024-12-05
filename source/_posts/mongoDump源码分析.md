@@ -723,9 +723,17 @@ func (dump *MongoDump) dumpValidatedQueryToIntent(
 ```
 
 
-#### 多路复用读写模块: archive.Writer/Reader
-* 这是MongoDump唯一比较复杂的模块
+#### 多路读写模块: archive.Writer/Reader
+* 这是MongoDump唯一比较复杂的模块, 因为只讲备份, 所以只讲`archive.Writer`, `archive.Reader`是恢复时用到, 原理一样
 
+* 多路读写核心`Multiplexer`, 里面有个核心组件`MuxIn`, 这东西其实就是上面提到的`BSONFile`的实现, 每次`BSONFile.Open`就相当于`New`一个`NuxIn`然后塞给`Multiplexer`管理, `MuxIn`就是多路读写里面的`路`
+
+* 多路读写怎么实现? 其实本质是`多路In, 一路Out`, 上面提到的`MuxIn`是实现`多路In`, 而`一路Out`的关键逻辑在`Multiplexer.formatBody`, 这里可以看看下面的源码, 其实就是利用写入header和namespace来做数据隔离, 配合`Multiplexer`的`select channel`这样就实现了多路读写. 这个思想是值得学习的
+
+* 概念那么多是不是看了头晕? 我们将所有概念都关联起来捋一下:
+    - 在1次备份中, 只有1个`archive.Writer`, 也意味着只有1个`Multiplexer`, 1个`Multiplexer`管理了`n`个`MuxIn`, `n`又等于`Intent`的个数, `Intent`有多少个? `Intent`的个数为`len(collections) + 1 + 1`, 这里的两个`1`分别是`metadata`和`oplog`
+
+* `Multiplexer`源码的几个核心方法:
 ```go
 type Writer struct {
 	Out     io.WriteCloser
@@ -733,9 +741,225 @@ type Writer struct {
 	Mux     *Multiplexer
 }
 
-type Reader struct {
-	In      io.ReadCloser
-	Demux   *Demultiplexer
-	Prelude *Prelude
+type Multiplexer struct {
+	Out       io.WriteCloser
+	Control   chan *MuxIn
+	Completed chan error
+	shutdownInputs notifier
+	// ins and selectCases are correlating slices
+	ins              []*MuxIn
+	selectCases      []reflect.SelectCase
+	currentNamespace string
+}
+
+type notifier interface {
+	Notify()
+}
+
+func NewMultiplexer(out io.WriteCloser, shutdownInputs notifier) *Multiplexer {
+	mux := &Multiplexer{
+		Out:            out,
+		Control:        make(chan *MuxIn),
+		Completed:      make(chan error),
+		shutdownInputs: shutdownInputs,
+		ins: []*MuxIn{
+			nil, // There is no MuxIn for the Control case
+		},
+	}
+    // 反射实现channel select, 非常少见的玩法!
+	mux.selectCases = []reflect.SelectCase{
+		{
+			Dir:  reflect.SelectRecv,
+			Chan: reflect.ValueOf(mux.Control),
+			Send: reflect.Value{},
+		},
+	}
+	return mux
+}
+
+// 核心事件循环: 处理MuxIn的增删事件和来自MuxIn的写数据事件
+func (mux *Multiplexer) Run() {
+	var err, completionErr error
+	for {
+		// select的反射玩法, 学到了
+		index, value, notEOF := reflect.Select(mux.selectCases)
+		EOF := !notEOF
+		if index == 0 { // index 0 为 mux.Control, 用于接收新的MuxIn
+			if EOF {
+				log.Logvf(log.DebugLow, "Mux finish")
+				mux.Out.Close()
+				if completionErr != nil {
+					mux.Completed <- completionErr
+				} else if len(mux.selectCases) != 1 {
+					mux.Completed <- fmt.Errorf("Mux ending but selectCases still open %v",
+						len(mux.selectCases))
+				} else {
+					mux.Completed <- nil
+				}
+				return
+			}
+			muxIn, ok := value.Interface().(*MuxIn)
+			if !ok {
+				mux.Completed <- fmt.Errorf("non MuxIn received on Control chan") // one for the MuxIn.Open
+				return
+			}
+			log.Logvf(log.DebugLow, "Mux open namespace %v", muxIn.Intent.DataNamespace())
+			mux.selectCases = append(mux.selectCases, reflect.SelectCase{
+				Dir:  reflect.SelectRecv,
+				Chan: reflect.ValueOf(muxIn.writeChan),
+				Send: reflect.Value{},
+			})
+			mux.ins = append(mux.ins, muxIn)
+		} else { // index > 0 为 MuxIn.writeChan, 用于接收MuxIn.Write的data
+			if EOF {
+				mux.ins[index].writeCloseFinishedChan <- struct{}{}
+
+				err = mux.formatEOF(index, mux.ins[index])
+				if err != nil {
+					mux.shutdownInputs.Notify()
+					mux.Out = &nopCloseNopWriter{}
+					completionErr = err
+				}
+				log.Logvf(log.DebugLow, "Mux close namespace %v", mux.ins[index].Intent.DataNamespace())
+				mux.currentNamespace = ""
+				mux.selectCases = append(mux.selectCases[:index], mux.selectCases[index+1:]...)
+				mux.ins = append(mux.ins[:index], mux.ins[index+1:]...)
+			} else {
+				bsonBytes, ok := value.Interface().([]byte)
+				if !ok {
+					mux.Completed <- fmt.Errorf("multiplexer received a value that wasn't a []byte")
+					return
+				}
+				// format bsonBytes, 然后 mux.Out.Write(bsonBytes)
+				err = mux.formatBody(mux.ins[index], bsonBytes)
+				if err != nil {
+					mux.shutdownInputs.Notify()
+					mux.Out = &nopCloseNopWriter{}
+					completionErr = err
+				}
+			}
+		}
+	}
+}
+
+
+// 核心逻辑, 这个里的header用于隔离不同namespace的数据, 已达到多路的效果, 恢复的时候也是根据header来恢复的
+// mux.Out.Write header和bsonBytes, 这里的Out其实就是dump.archive.Out
+func (mux *Multiplexer) formatBody(in *MuxIn, bsonBytes []byte) error {
+	var err error
+	var length int
+	defer func() {
+		in.writeLenChan <- length
+	}()
+	if in.Intent.DataNamespace() != mux.currentNamespace {
+		// Handle the change of which DB/Collection we're writing docs for
+		// If mux.currentNamespace then we need to terminate the current block
+		if mux.currentNamespace != "" {
+			l, err := mux.Out.Write(terminatorBytes)
+			if err != nil {
+				return err
+			}
+			if l != len(terminatorBytes) {
+				return io.ErrShortWrite
+			}
+		}
+		header, err := bson.Marshal(NamespaceHeader{
+			Database:   in.Intent.DB,
+			Collection: in.Intent.DataCollection(),
+		})
+		if err != nil {
+			return err
+		}
+		l, err := mux.Out.Write(header)
+		if err != nil {
+			return err
+		}
+		if l != len(header) {
+			return io.ErrShortWrite
+		}
+	}
+	mux.currentNamespace = in.Intent.DataNamespace()
+	length, err = mux.Out.Write(bsonBytes)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+```
+
+* `MuxIn`源码:
+```go
+type MuxIn struct {
+	writeChan              chan []byte
+	writeLenChan           chan int
+	writeCloseFinishedChan chan struct{}
+	buf                    []byte
+	hash                   hash.Hash64
+	Intent                 *intents.Intent
+	Mux                    *Multiplexer
+}
+
+func (muxIn *MuxIn) Read([]byte) (int, error) {
+	return 0, nil
+}
+
+func (muxIn *MuxIn) Pos() int64 {
+	return 0
+}
+
+// 关闭muxIn内部的所有chan, 最后multiplexer会收到关闭信号并返回formatEOF, 同时multiplexer也会发信号muxIn.writeCloseFinishedChan
+func (muxIn *MuxIn) Close() error {
+	// the mux side of this gets closed in the mux when it gets an eof on the read
+	log.Logvf(log.DebugHigh, "MuxIn close %v", muxIn.Intent.DataNamespace())
+	if bufferWrites {
+		muxIn.writeChan <- muxIn.buf
+		length := <-muxIn.writeLenChan
+		if length != len(muxIn.buf) {
+			return io.ErrShortWrite
+		}
+		muxIn.buf = nil
+	}
+	close(muxIn.writeChan)
+	close(muxIn.writeLenChan)
+	<-muxIn.writeCloseFinishedChan
+	return nil
+}
+
+// 初始化muxIn, 然后把自己发给 muxIn.Mux
+func (muxIn *MuxIn) Open() error {
+	log.Logvf(log.DebugHigh, "MuxIn open %v", muxIn.Intent.DataNamespace())
+	muxIn.writeChan = make(chan []byte)
+	muxIn.writeLenChan = make(chan int)
+	muxIn.writeCloseFinishedChan = make(chan struct{})
+	muxIn.buf = make([]byte, 0, bufferSize)
+	muxIn.hash = crc64.New(crc64.MakeTable(crc64.ECMA))
+	if bufferWrites {
+		muxIn.buf = make([]byte, 0, db.MaxBSONSize)
+	}
+	muxIn.Mux.Control <- muxIn
+	return nil
+}
+
+// buf写入muxIn.buf, 满了就把muxIn.buf写入muxIn.writeChan, 然后清空muxIn.buf
+func (muxIn *MuxIn) Write(buf []byte) (int, error) {
+	if bufferWrites { // 固定true
+		if len(muxIn.buf)+len(buf) > cap(muxIn.buf) {
+			muxIn.writeChan <- muxIn.buf
+			length := <-muxIn.writeLenChan
+			if length != len(muxIn.buf) {
+				return 0, io.ErrShortWrite
+			}
+			muxIn.buf = muxIn.buf[:0]
+		}
+		muxIn.buf = append(muxIn.buf, buf...)
+	} else {
+		muxIn.writeChan <- buf
+		length := <-muxIn.writeLenChan
+		if length != len(buf) {
+			return 0, io.ErrShortWrite
+		}
+	}
+	muxIn.hash.Write(buf)
+	return len(buf), nil
 }
 ```
