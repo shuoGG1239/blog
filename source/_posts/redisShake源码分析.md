@@ -11,6 +11,14 @@ tags:
 * 近期用到了RedisShake做数据迁移, 源码代码量不多于是看了一遍, 本篇为阅读源码的笔记
 * 本篇重点讲解RedisShake的数据迁移功能, 其他几个功能dump,decode,restore,rump只简单提及
 
+
+#### 原理及架构
+* 原理用一句话概述就是: 假装成源Redis的slave, 利用`pSync`接收来自源Redis的数据再回放到目标Redis
+* redisShake架构图cluster版
+![cluster](https://tair-opensource.github.io/RedisShake/architecture-c2c.svg)
+* redisShake架构图standalone版
+![standalone](https://tair-opensource.github.io/RedisShake/architecture-s2s.svg)
+
 #### 源码信息
 * 源码版本: v1.6
 * 源码仓库: [https://github.com/tair-opensource/RedisShake](https://github.com/tair-opensource/RedisShake)
@@ -361,9 +369,3 @@ func (ds *dbSyncer) syncCommand(reader *bufio.Reader, target []string, auth_type
 #### 四. 总结
 * 简单来说, 这个迁移原理就是假装为slave (利用pSync), 接收源redis的rdb然后restore到目标redis实现全量同步, 
 然后继续接收源redis的增量cmd然后回放到目标redis实现增量同步
-
-* 附官方架构图cluster版
-![cluster](https://tair-opensource.github.io/RedisShake/architecture-c2c.svg)
-
-* 附官方架构图standalone版
-![standalone](https://tair-opensource.github.io/RedisShake/architecture-s2s.svg)
