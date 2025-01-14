@@ -2,7 +2,7 @@
 title: danbooru爬图
 date: 2023/08/13
 categories: 
-- ai
+- Ai
 tags:
 - python
 ---

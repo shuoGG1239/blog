@@ -2,7 +2,7 @@
 title: ai图手脚崩坏如何修复
 date: 2023/12/06
 categories: 
-- [ai]
+- [Ai]
 - [画画]
 ---
 
