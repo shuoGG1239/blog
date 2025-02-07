@@ -2,7 +2,7 @@
 title: Py小玩具-Tcp&Udp&串口调试工具
 date: 2019/03/31
 categories: 
-- PC端
+- 桌面端
 tags:
 - python
 ---

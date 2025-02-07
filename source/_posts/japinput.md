@@ -2,7 +2,7 @@
 title: Py小玩具-罗马转假名
 date: 2019/06/09
 categories: 
-- PC端
+- 桌面端
 tags:
 - python
 ---

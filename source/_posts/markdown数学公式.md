@@ -2,7 +2,7 @@
 title: markdown数学公式
 date: 2022/11/03
 categories: 
-- Ai
+- ai
 tags:
 - markdown
 ---

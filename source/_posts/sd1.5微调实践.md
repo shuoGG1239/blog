@@ -2,7 +2,7 @@
 title: sd1.5微调实践
 date: 2023/12/23
 categories: 
-- Ai
+- ai
 ---
 
 #### 微调实践

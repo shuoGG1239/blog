@@ -2,7 +2,7 @@
 title: 快速美化PyQt应用--QCandyUi
 date: 2018/07/11
 categories: 
-- PC端
+- 桌面端
 tags:
 - python
 - Qt
