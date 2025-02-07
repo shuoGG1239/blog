@@ -13,7 +13,7 @@ tags:
 
 
 #### 原理及架构
-* 架构 [mongoshake-arch](https://github.com/alibaba/MongoShake/blob/develop/resources/dataflow.png)
+* 架构 ![mongoshake-arch](https://github.com/alibaba/MongoShake/blob/develop/resources/dataflow.png)
 
 
 #### 源码信息
