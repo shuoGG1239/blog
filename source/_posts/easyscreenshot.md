@@ -2,7 +2,7 @@
 title: Py小玩具-简易截图
 date: 2020/05/10
 categories: 
-- 桌面端
+- 前端
 tags:
 - python
 ---

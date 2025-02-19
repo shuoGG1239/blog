@@ -2,7 +2,7 @@
 title: gh-ost源码分析
 date: 2024/05/22
 categories: 
-- db
+- 后端
 tags:
 - go
 - mysql

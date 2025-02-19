@@ -2,7 +2,7 @@
 title: llOnebot实现QQ机器人
 date: 2024/10/24
 categories: 
-- 工具
+- 杂杂
 ---
 
 #### QQ机器人的近乎完美方案

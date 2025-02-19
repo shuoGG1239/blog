@@ -2,7 +2,7 @@
 title: 总结Pyinstaller的坑及终极解决方法
 date: 2018/07/06
 categories: 
-- 桌面端
+- 前端
 tags:
 - python
 ---
