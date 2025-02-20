@@ -2,7 +2,7 @@
 title: QQ机器人qqbot把玩
 date: 2024/07/30
 categories: 
-- 工具
+- 杂杂
 tags:
 - python
 ---

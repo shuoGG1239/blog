@@ -2,7 +2,7 @@
 title: 博客主题icarus样式魔改
 date: 2024/11/27
 categories: 
-- 工具
+- 杂杂
 tags:
 - hexo
 ---
