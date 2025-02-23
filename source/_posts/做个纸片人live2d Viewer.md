@@ -1,8 +1,9 @@
 ---
-title: 做个纸片人live2d Viewer
+title: 做个纸片人桌宠live2d Viewer
 date: 2020/01/31
 categories: 
-- 前端
+- [前端]
+- [美术]
 tags:
 - live2d
 - electron
@@ -10,7 +11,7 @@ tags:
 
 #### 展示下效果
 
-* 双生最近的圣诞苏小真Live2d做的是真的好, 不得不说西山居的Live2d技术用得真溜!
+* 能在桌面展示Live2d模型并和鼠标互动 (双生最近的圣诞苏小真的Live2d模型做的是真的好!)
 
 ![suxiaozhen_20191225_1.gif](https://s2.loli.net/2025/02/19/KNphZnWcXUl1SyT.gif)
 

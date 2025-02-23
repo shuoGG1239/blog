@@ -3,6 +3,8 @@ title: Py小玩具-简单好用的OCR
 date: 2018/07/21
 categories: 
 - ai
+tags:
+- Qt
 ---
 #### 效果如下
 * 截图识别

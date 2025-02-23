@@ -13,7 +13,7 @@ tags:
 * 想训练个画风, 但素材不多, 可预见的效果不会好到哪去
 ![shuogg1_train_images.jpg](https://s2.loli.net/2025/02/20/nMqwmgeJIBi2dPV.jpg)
 
-* 核心的训练参数如下:
+* 主要的几个训练参数如下:
 ```text
 network_module: lora
 optimizer: AdamW8bit
