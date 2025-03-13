@@ -12,14 +12,16 @@ categories:
 
 #### 部署
 1. 安装`QQNT`: [安装包地址](https://dldir1.qq.com/qqfile/qq/QQNT/dd395162/QQ9.9.16.29456_x64.exe)
-    - 在安装目录下找到`resources\app\app_launcher`, 到`app_launcher`目录下创建文件`llob.js`, 然后写入一句`require(String.raw`./LiteLoaderQQNT`)`
-    - 在安装目录下找到`resources\app\app_launcher\package.json`, 将json里面的`main`对应的值改为"./app_launcher/llob.js"
+    - 在安装目录下找到`resources\app\app_launcher`, 到`app_launcher`目录下创建文件`llob.js`, 然后写入一句```require(String.raw`./LiteLoaderQQNT`)```
+    - 在安装目录下找到`resources\app\app_launcher\package.json`, 将json里面的`main`对应的值改为`./app_launcher/llob.js`
+    - 强调: 上面个resources文件不是和QQ.exe同目录下那个, 而是versions的子文件夹
 
 2. 下载`LiteLoaderQQNT.zip`: [下载地址](https://ghp.ci/https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.2.3/LiteLoaderQQNT.zip)
     - 将解压出来的整个文件夹`LiteLoaderQQNT`复制到第1步的`llob.js`相同目录下
     - 在`LiteLoaderQQNT`文件夹内创建一个`plugins`文件夹
 
 3. 下载`LLOneBot.zip`: [下载地址](https://ghp.ci/https://github.com/LLOneBot/LLOneBot/releases/download/v4.4.1/LLOneBot.zip)
+    - 解压后将llonebot的文件夹放在上面创建的`plugins`文件夹里
 
 4. 下载`dbghelp_x64.dll`: [下载地址](https://ghp.ci/https://github.com/LiteLoaderQQNT/QQNTFileVerifyPatch/releases/download/DllHijack_1.1.2/dbghelp_x64.dll)
     - 下载完后重命名为`dbghelp.dll`然后放到和`QQ.exe`同目录(就是第1步安装的那个QQ)

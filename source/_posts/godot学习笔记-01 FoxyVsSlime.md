@@ -50,11 +50,19 @@ tags:
   * 脚本可以直接使用被绑节点实例的field, 不需要加this或self之类的, 查看修改都行, 例如main节点是Node2D类型, 有`position`属性, 可以直接`position=xxx`直接修改main节点的位置
   * 脚本对应节点上的子节点可以直接`$节点id`获取其节点
   * ![img_1740317436955.png](https://s2.loli.net/2025/02/23/rhEVwsut1JOc4HU.png)
-  * 看下另外一个节点enemy, 是Area2D节点所以有碰撞信号如`_area_entered`, 红是信号, 绿是信号接受函数, 类似Qt的信号与槽, 但godot这边只能一对一
+  * 看下另外一个节点enemy, 是Area2D节点所以有碰撞信号如`_area_entered`, 红是信号, 绿是信号接受函数, 类似Qt的信号与槽
   * ![img_1740320846610.png](https://s2.loli.net/2025/02/23/xvTu2sHfIOZc5FX.png)
 * 调试, 按F5运行游戏调试
   * 运行期间可以在`场景/远程`时实查看运行时节点
   * ![img_1740322422800.png](https://s2.loli.net/2025/02/23/Qrqm3otP9cuMOIK.png)
+
+
+
+#### 关于position
+
+* `position`变量是相对父节的位置, 全局位置则是`global_position`
+* 节点默认的初始`position`就是`(0,0)`, 你可以看下Tranform的position或者在onready打印下看看
+* 例如`game`和`player`是父子关系, `player`一开始放置在`game`的`(111,222)`位置, 此时如果`player`的`position`从`(0,0)`变为`(100,300)`, 他则在`game`的位置就变成`(211,522)`了 
 
 
 
@@ -85,7 +93,7 @@ tags:
 
   
 
-* 敌人slime: `Area2D` (能检测其他带物理碰撞区的节点的碰撞`_on_body_entered`,`_on_area_entered`)
+* 敌人slime: `Area2D` (能检测其他带物理碰撞区的节点的碰撞信号`area_entered`,`body_entered`)
 
   * slime动画雪碧图: `AnimatedSprite2D`
   * slime物理碰撞区:  `CollisionShape2D`
