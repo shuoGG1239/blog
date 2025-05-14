@@ -2,9 +2,7 @@
 title: BA逆向资源与解包思路
 date: 2025/05/01
 categories: 
-- 游戏开发
-tags:
-- python
+- 美术
 ---
 
 #### 前言
